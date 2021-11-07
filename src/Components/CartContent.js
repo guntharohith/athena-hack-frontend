@@ -2,16 +2,16 @@ import styled from "styled-components"
 import AmountButtons from './AmountButtons'
 import { useCartContext } from '../context/cart_context'
 import { FaTrash } from 'react-icons/fa'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { deleteCartFull, deleteCartItem } from "../utils/apiCalls"
 
 function CartContent() {
-    const { cartItems,total_amount ,toggleAmount,removeCartItem,clearCart} = useCartContext()
-    function removeCItem(id){
+    const { cartItems, total_amount, toggleAmount, removeCartItem, clearCart } = useCartContext()
+    function removeCItem(id) {
         deleteCartItem(id)
         removeCartItem(id)
     }
-    function clearAll(){
+    function clearAll() {
         deleteCartFull()
         clearCart()
     }
@@ -24,7 +24,7 @@ function CartContent() {
                 <h5>Subtotal</h5>
                 <span></span>
             </div>
-            <hr className="first-line"/>
+            <hr className="first-line" />
             <div className="cart-items">
                 {
                     cartItems.map((item) => {
@@ -39,18 +39,18 @@ function CartContent() {
                                     </div>
                                 </div>
                                 <p className="price">Rs.{item.price}</p>
-                                <AmountButtons  amount={item.quantity} decrease={() => toggleAmount(item.cartId,"dec",item.quantity)} increase={() => toggleAmount(item.cartId,"inc",item.quantity)}></AmountButtons>
+                                <AmountButtons amount={item.quantity} decrease={() => toggleAmount(item.cartId, "dec", item.quantity)} increase={() => toggleAmount(item.cartId, "inc", item.quantity)}></AmountButtons>
                                 <p className="price">Rs.{(item.price * item.quantity).toFixed(2)} </p>
-                                <button type="button" onClick={() => removeCItem(item.cartId)} className="trash"><FaTrash/></button>
+                                <button type="button" onClick={() => removeCItem(item.cartId)} className="trash"><FaTrash /></button>
                             </div>
                         )
                     })
                 }
             </div>
-            <hr/>
+            <hr />
             <div className="btns">
                 <Link to="/products">Continue Shopping</Link>
-                <button type="button" onClick={clearAll}>Clear Shopping Cart</button>
+                <Link className="btn" to='/checkout'>Checkout</Link>
             </div>
             <div className="bill-main">
                 <div>
