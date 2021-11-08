@@ -7,11 +7,14 @@ import axios from 'axios'
 import { FaTimes } from 'react-icons/fa'
 import PageHero from '../../Components/PageHero'
 import { url } from '../../utils/constants'
+import LoadingSmall from '../../Components/LoadingSmall'
 const token = localStorage.getItem("token")
 
 function EditProduct() {
     const { id } = useParams()
     const [loading,setLoading] = useState(false)
+    const [showError, setShowError] = useState(false)
+    const [showProgress, setProgress] = useState(false)
     const [images, setImages] = useState([])
     const [colors, setColors] = useState([])
     const [product, setProduct] = useState({
@@ -45,14 +48,32 @@ function EditProduct() {
         }
     }
 
+    function toggleError() {
+        setShowError(showError => !showError)
+    }
+
+    function toggleProgress() {
+        setProgress(showProgress => !showProgress)
+    }
+
     function handleProduct(e) {
         e.preventDefault()
+        toggleProgress()
+        if (showError) {
+            toggleError()
+        }
         axios.put(url + "updateProduct/" + id, {
             name, price, description, company, stock, stars, reviews, category, shipping, images, colors
         }, {
             headers: {
                 Authorization: "Bearer " + token
             }
+        }).then((res) => {
+            toggleProgress()
+        })
+        .catch((error) => {
+            toggleError()
+            toggleProgress()
         })
     }
 
@@ -75,19 +96,19 @@ function EditProduct() {
                 <img src={heroBcg} alt="heroBcg"></img>
                 <form onSubmit={handleProduct}>
                     <div className="form-control">
-                        <input type="text" name="name" placeholder="Product Name" value={name} onChange={onChange}></input>
+                        <input type="text" name="name" placeholder="Product Name" value={name} onChange={onChange} required></input>
                     </div>
                     <div className="form-control">
-                        <input type="number" name="price" placeholder="Price" value={price} onChange={onChange}></input>
+                        <input type="number" name="price" placeholder="Price" value={price} onChange={onChange} required></input>
                     </div>
                     <div className="form-control">
-                        <textarea rows={3} name="description" placeholder="Description" value={description} onChange={onChange}></textarea>
+                        <textarea rows={3} name="description" placeholder="Description" value={description} onChange={onChange} required></textarea>
                     </div>
                     <div className="form-control">
-                        <input type="text" name="company" placeholder="Company" value={company} onChange={onChange}></input>
+                        <input type="text" name="company" placeholder="Company" value={company} onChange={onChange} required></input>
                     </div>
                     <div className="form-control">
-                        <input type="number" name="stock" placeholder="Stock" value={stock} onChange={onChange}></input>
+                        <input type="number" name="stock" placeholder="Stock" value={stock} onChange={onChange} required></input>
                     </div>
                     <div className="form-control">
                         <input type="number" name="stars" placeholder="Rating out of 5" value={stars} onChange={onChange}></input>
@@ -96,7 +117,7 @@ function EditProduct() {
                         <input type="number" name="reviews" placeholder="Reviews" value={reviews} onChange={onChange}></input>
                     </div>
                     <div className="form-control">
-                        <input type="text" name="category" placeholder="Category" value={category} onChange={onChange}></input>
+                        <input type="text" name="category" placeholder="Category" value={category} onChange={onChange} required></input>
                     </div>
                     <div className="form-control shipping">
                         <label htmlFor="shipping">Free Shipping</label>
@@ -124,7 +145,14 @@ function EditProduct() {
                             )
                         })}
                     </div>
-                    <button type="submit" className="btn">Save Product</button>
+                    {
+                        showError &&
+                        <label className="invalid-text" hidden={false}>Something went wrong</label>
+                    }
+                    {
+                        showProgress ? <LoadingSmall /> :
+                            <button type="submit" className="btn">Save Product</button>
+                    }
                 </form>
             </div>
 
@@ -224,6 +252,19 @@ const Wrapper = styled.div`
                 color:rgb(5, 5, 26);
             }
         }
+    }
+
+    @media (max-width:992px){
+        .section-center{
+            grid-template-columns:1fr;
+            margin-bottom:80px;
+            margin-top:50px;
+            width:80vw;
+            img{
+                display: none;
+            }
+        }
+        
     }
 `
 export default EditProduct

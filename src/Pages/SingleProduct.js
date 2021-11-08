@@ -1,33 +1,45 @@
 import React, { useEffect } from 'react'
 import Loading from '../Components/Loading'
-import {useProductsContext} from '../context/products_context'
+import { useProductsContext } from '../context/products_context'
 import styled from 'styled-components'
 import ImageContainer from '../Components/ImageContainer'
 import Stars from '../Components/Stars'
 import PageHero from '../Components/PageHero'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import AddToCart from '../Components/AddToCart'
+import { frontendUrl } from '../utils/constants'
+import {
+    FacebookShareButton,
+    FacebookIcon,
+    WhatsappShareButton,
+    WhatsappIcon,
+    LinkedinShareButton,
+    LinkedinIcon
+} from 'react-share';
 
-function SingleProduct(){
-    const {id} = useParams()
-    const {single_product,single_loading,single_error,fetchSingleProduct} = useProductsContext()
-    
-    useEffect(()=>{
+function SingleProduct() {
+    const { id } = useParams()
+    const { single_product, single_loading, single_error, fetchSingleProduct, progress } = useProductsContext()
+
+    useEffect(() => {
         fetchSingleProduct(id)
         //eslint-disable-next-line
-    },[])
+    }, [])
 
-    if(single_loading){
-        return <Loading/>
+    if (single_loading) {
+        return <Loading />
     }
-    if(single_error){
+    if (single_error) {
         return <h2>Sorry, there was an error...</h2>
     }
-    return(
+
+    const prouctUrl = frontendUrl + 'products/' + id
+
+    return (
         <Wrapper >
-            <PageHero title={single_product.name} product/>
+            <PageHero title={single_product.name} product />
             <div className="section section-center">
-               <div className="product-center">
+                <div className="product-center">
                     <ImageContainer images={single_product.images} />
                     <div>
                         <h1 className="title">{single_product.name}</h1>
@@ -52,11 +64,21 @@ function SingleProduct(){
                                 <AddToCart product={single_product} />
                             </div>
                             : null}
-
+                        <div className="share-icons">
+                            <FacebookShareButton className="share-icon" url={prouctUrl}>
+                                <FacebookIcon round={true} size={45} />
+                            </FacebookShareButton>
+                            <WhatsappShareButton className="share-icon" url={prouctUrl}>
+                                <WhatsappIcon round={true} size={45} />
+                            </WhatsappShareButton>
+                            <LinkedinShareButton className="share-icon" url={prouctUrl}>
+                                <LinkedinIcon round={true} size={45} />
+                            </LinkedinShareButton>
+                        </div>
                     </div>
-                </div>  
+                </div>
             </div>
-        </Wrapper>  
+        </Wrapper>
     )
 }
 const Wrapper = styled.main`
@@ -81,6 +103,12 @@ const Wrapper = styled.main`
         letter-spacing:1px;
         color:green;
         font-weight:700;
+    }
+    .share-icon{
+        margin-right:10px;
+    }
+    .share-icons{
+        margin-top:20px;
     }
     .des{
         letter-spacing:0.7px;

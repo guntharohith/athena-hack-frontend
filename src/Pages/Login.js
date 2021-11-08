@@ -1,48 +1,70 @@
-import React, {useState,useRef,useEffect} from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import styled from "styled-components"
 import heroBcg from '../assets/heroBcg.jpg'
-import { FaUser} from 'react-icons/fa'
-import { RiLockPasswordFill} from 'react-icons/ri'
-import { Link} from "react-router-dom"
+import { FaUser } from 'react-icons/fa'
+import { RiLockPasswordFill } from 'react-icons/ri'
+import { Link } from "react-router-dom"
 import history from '../utils/history'
 import axios from 'axios'
-import {url} from '../utils/constants'
-function Login(){
-    const [details,setDetails] = useState({username:"",password:"",remember:false})
-    const {username,password,remember} = details
-    const [toggle,setToggle] = useState(false)
-    const [loggedIn,setIsLoggedIn] = useState(false)
+import { url } from '../utils/constants'
+import LoadingSmall from '../Components/LoadingSmall'
+function Login() {
+    const [details, setDetails] = useState({ username: "", password: "", remember: false })
+    const { username, password, remember } = details
+    const [toggle, setToggle] = useState(false)
+    const [loggedIn, setIsLoggedIn] = useState(false)
     const passRef = useRef()
+    const [showError, setShowError] = useState(false)
+    const [showProgress, setProgress] = useState(false)
 
-     useEffect(() => {
+    useEffect(() => {
         return () => {
             window.location.reload()
         }
     }, [loggedIn])
 
-    function updateDetails(e){
+    function toggleError() {
+        setShowError(showError => !showError)
+    }
+
+    function toggleProgress() {
+        setProgress(showProgress => !showProgress)
+    }
+
+    function updateDetails(e) {
         let name = e.target.name
-        if(name === "remember"){
-            setDetails({...details,[name]:e.target.checked})
+        if (name === "remember") {
+            setDetails({ ...details, [name]: e.target.checked })
         }
-        else{
-            setDetails({...details,[name]:e.target.value})
+        else {
+            setDetails({ ...details, [name]: e.target.value })
         }
 
     }
-    function handleSubmit(e){
+    function handleSubmit(e) {
         e.preventDefault()
-        axios.post(url+"login",{userName:username,password:password})
-        .then((res) => {username !== "admin@gmail.com" ? history.push({pathname:"/home"}) : history.push({pathname:"/admin-home"});
-        username !== "admin@gmail.com" ? localStorage.setItem("role","user") : localStorage.setItem("role","admin") ;
-        localStorage.setItem("token",res.data.jwtToken);
-        setIsLoggedIn(true)})
+        toggleProgress()
+        if(showError) {
+            toggleError()
+        }
+        console.log(showProgress)
+        axios.post(url + "login", { userName: username, password: password })
+            .then((res) => {
+                username !== "admin@gmail.com" ? history.push({ pathname: "/home" }) : history.push({ pathname: "/admin-home" });
+                username !== "admin@gmail.com" ? localStorage.setItem("role", "user") : localStorage.setItem("role", "admin");
+                localStorage.setItem("token", res.data.jwtToken);
+                setIsLoggedIn(true)
+            })
+            .catch((error) => {
+                toggleError()
+                toggleProgress()
+            })
     }
-    function togglePassword(){
+    function togglePassword() {
         setToggle(!toggle)
         !toggle ? passRef.current.type = "text" : passRef.current.type = "password"
     }
-    return(
+    return (
         <Wrapper className="section section-center">
             <div className="image-container">
                 <img src={heroBcg} alt="herobcg"></img>
@@ -52,19 +74,26 @@ function Login(){
                 <h1>Sign in</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="form-control">
-                        <FaUser/>
-                        <input type="email" name="username" placeholder="User Name" value={username} onChange={updateDetails}></input>
+                        <FaUser />
+                        <input type="email" name="username" placeholder="User Name" value={username} onChange={updateDetails} required></input>
                     </div>
                     <div className="form-control">
                         <label htmlFor="password"><RiLockPasswordFill /></label>
-                        <input type="password" ref={passRef} name="password" placeholder="Password" value={password} onChange={updateDetails}></input>
-                        <button type="button" onClick={togglePassword}>{toggle ? "Hide": "Show"}</button>
+                        <input type="password" ref={passRef} name="password" placeholder="Password" value={password} onChange={updateDetails} minLength="4" required></input>
+                        <button type="button" onClick={togglePassword}>{toggle ? "Hide" : "Show"}</button>
                     </div>
                     <div className="form-checkbox">
                         <input type="checkbox" name="remember" value={remember} onChange={updateDetails}></input>
                         <label htmlFor="remeber">Remember me</label>
                     </div>
-                    <button className="btn" type="submit">Log in</button>
+                    {
+                        showError &&
+                        <label className="invalid-text" hidden={false}>Something went wrong</label>
+                    }
+                    {
+                        showProgress ? <LoadingSmall /> :
+                            <button className="btn" type="submit">Log in</button>
+                    }
                 </form>
             </div>
         </Wrapper>
@@ -91,6 +120,12 @@ const Wrapper = styled.div`
             letter-spacing:1px;
             text-decoration:underline;
         }
+    }
+    .invalid-text{
+        color:rgb(255, 0, 0);
+        display:flex;
+        align-items:center;
+        margin-bottom:30px;
     }
     .login-container{
         h1{
@@ -146,7 +181,7 @@ const Wrapper = styled.div`
             .form-checkbox{
                 display:flex;
                 align-items:center;
-                margin-bottom:40px;
+                margin-bottom:30px;
                 label{
                     margin-left:15px;
                 }
@@ -171,6 +206,16 @@ const Wrapper = styled.div`
         align-items:center
        
     }
-    
+    @media (min-width:400px){
+        column-gap:100px;
+        .image-container{
+            img{
+                width:100%;
+                height:200px;
+                border-radius:10px;
+                margin-bottom:10px;
+            }
+        }
+    }
 `
 export default Login

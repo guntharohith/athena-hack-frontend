@@ -1,5 +1,3 @@
-export const products_url = 'https://course-api.com/react-store-products'
+export const url = "https://urja-furni-store.herokuapp.com/"
 
-export const single_product_url = `https://course-api.com/react-store-single-product?id=`
-
-export const url = "http://localhost:8080/"
+export const frontendUrl = "https://urja-furni-store.netlify.app/"

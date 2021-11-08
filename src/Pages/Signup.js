@@ -1,77 +1,106 @@
-import React, {useState,useEffect} from "react"
+import React, { useState, useEffect } from "react"
 import styled from "styled-components"
 import heroBcg from '../assets/heroBcg.jpg'
-import { FaUser, FaMobileAlt} from 'react-icons/fa'
-import { RiLockPasswordFill, RiLockPasswordLine} from 'react-icons/ri'
-import { IoMdMail} from 'react-icons/io'
-import {Link,useHistory } from 'react-router-dom'
+import { FaUser, FaMobileAlt } from 'react-icons/fa'
+import { RiLockPasswordFill, RiLockPasswordLine } from 'react-icons/ri'
+import { IoMdMail } from 'react-icons/io'
+import { Link, useHistory } from 'react-router-dom'
 import axios from "axios"
-import {url} from '../utils/constants'
+import { url } from '../utils/constants'
+import LoadingSmall from '../Components/LoadingSmall'
 
-function Signup(){
+function Signup() {
     const history = useHistory()
-    const [userDetails,setUserDetails] = useState({
-        username:"",email:"",mobileNumber:"",password:"",repassword:"",remember:false})
-    const {username,email,mobileNumber,password,repassword,remember} = userDetails
+    const [showError, setShowError] = useState(false)
+    const [showProgress, setProgress] = useState(false)
+    const [userDetails, setUserDetails] = useState({
+        username: "", email: "", mobileNumber: "", password: "", repassword: "", remember: false
+    })
+    const { username, email, mobileNumber, password, repassword, remember } = userDetails
     useEffect(() => {
         return () => {
             window.location.reload()
         }
     }, [])
 
-    function changeDetails(e){
+    function toggleError() {
+        setShowError(showError => !showError)
+    }
+
+    function toggleProgress() {
+        setProgress(showProgress => !showProgress)
+    }
+
+    function changeDetails(e) {
         let name = e.target.name
-        if(name === "remember"){
-            setUserDetails({...userDetails,[name]:e.target.checked})
+        if (name === "remember") {
+            setUserDetails({ ...userDetails, [name]: e.target.checked })
         }
-        else{
-            setUserDetails({...userDetails,[name]:e.target.value})
+        else {
+            setUserDetails({ ...userDetails, [name]: e.target.value })
         }
     }
 
-    function handleSubmit(e){
+    function handleSubmit(e) {
         e.preventDefault()
-        axios.post(url+"signup",{
-            userName:username,
-            email:email,
-            mobileNumber:mobileNumber,
-            password:password
-        }).then(
-            (res) => {
-                history.push({pathname:"/login"}) 
-            }
-        )
+        toggleProgress()
+        if (showError) {
+            toggleError()
+        }
+        if (password === repassword) {
+            axios.post(url + "signup", {
+                userName: username,
+                email: email,
+                mobileNumber: mobileNumber,
+                password: password
+            }).then((res) => {
+                history.push({ pathname: "/login" })
+            })
+                .catch((error) => {
+                    toggleError()
+                    toggleProgress()
+                })
+        } else {
+
+        }
     }
-    return(
+    return (
         <Wrapper className="section section-center">
             <div className="signup-container">
                 <h1>Sign up</h1>
                 <form onSubmit={handleSubmit}>
                     <div className="form-control">
                         <FaUser />
-                        <input type="text" name="username" placeholder="User Name" value={username} onChange={changeDetails}></input>
+                        <input type="text" name="username" placeholder="User Name" required value={username} onChange={changeDetails}></input>
                     </div>
                     <div className="form-control">
                         <IoMdMail />
-                        <input type="email" name="email" placeholder="Your Email" value={email} onChange={changeDetails}></input>
+                        <input type="email" name="email" placeholder="Your Email" required value={email} onChange={changeDetails}></input>
                     </div>
                     <div className="form-control">
                         <FaMobileAlt />
-                        <input type="text" name="mobileNumber" placeholder="Your Mobile Number" value={mobileNumber} onChange={changeDetails}></input>
+                        <input type="text" name="mobileNumber" placeholder="Your Mobile Number" required value={mobileNumber} onChange={changeDetails}></input>
                     </div>
                     <div className="form-control">
                         <RiLockPasswordFill />
-                        <input type="password" name="password" placeholder="Password" value={password} onChange={changeDetails}></input>
+                        <input type="password" name="password" placeholder="Password" required value={password} onChange={changeDetails} minLength="4"></input>
                     </div>
                     <div className="form-control">
                         <RiLockPasswordLine />
-                        <input type="password" name="repassword" placeholder="Repeat your Password" value={repassword} onChange={changeDetails}></input>
+                        <input type="password" name="repassword" placeholder="Repeat your Password" value={repassword} onChange={changeDetails} minLength="4"></input>
                     </div>
                     <div className="form-checkbox">
                         <input type="checkbox" name="remember" value={remember} onChange={changeDetails}></input>
                         <label htmlFor="remeber">I agree all statements in Terms of Service</label>
                     </div>
-                    <button type="submit">Sign up</button>
+                    {
+                        showError &&
+                        <label className="invalid-text" hidden={false}>Something went wrong</label>
+                    }
+                    {
+                        showProgress ? <LoadingSmall /> :
+                            <button type="submit">Sign up</button>
+                    }
                 </form>
             </div>
             <div className="image-container">
@@ -102,6 +131,12 @@ const Wrapper = styled.div`
             letter-spacing:1px;
             text-decoration:underline;
         }
+    }
+    .invalid-text{
+        color:rgb(255, 0, 0);
+        display:flex;
+        align-items:center;
+        margin-bottom:30px;
     }
     .signup-container{
         h1{

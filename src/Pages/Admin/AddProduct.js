@@ -1,66 +1,87 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import heroBcg from '../../assets/heroBcg.jpg'
 import axios from 'axios'
 import PageHero from '../../Components/PageHero'
 import { url } from '../../utils/constants'
-import {FaTimes} from 'react-icons/fa'
+import { FaTimes } from 'react-icons/fa'
+import LoadingSmall from '../../Components/LoadingSmall'
 const token = localStorage.getItem("token")
 
 function AddProduct() {
-    const [images,setImages] = useState([])
-    const [colors,setColors] = useState([])
-    const [product,setProduct] = useState({
-        name:"",
-        price:"",
-        description:"",
-        company:"",
-        stock:"",
-        stars:"",
-        reviews:"",
-        category:"",
-        shipping:false,
-        image:"",
-        color:""
+    const [showError, setShowError] = useState(false)
+    const [showProgress, setProgress] = useState(false)
+    const [images, setImages] = useState([])
+    const [colors, setColors] = useState([])
+    const [product, setProduct] = useState({
+        name: "",
+        price: "",
+        description: "",
+        company: "",
+        stock: "",
+        stars: "",
+        reviews: "",
+        category: "",
+        shipping: false,
+        image: "",
+        color: ""
 
     })
-    const {name,price,description,company,stock,stars,reviews,category,shipping,image,color} = product
-    
-    function onChange(e){
+    const { name, price, description, company, stock, stars, reviews, category, shipping, image, color } = product
+
+    function onChange(e) {
         const tname = e.target.name
-        if(tname === "shipping"){
-            setProduct({...product,[tname]:e.target.checked})
+        if (tname === "shipping") {
+            setProduct({ ...product, [tname]: e.target.checked })
         }
-        else{
-            setProduct({...product,[tname]:e.target.value})
+        else {
+            setProduct({ ...product, [tname]: e.target.value })
         }
     }
 
-    function handleProduct(e){
-        e.preventDefault()
-        axios.post(url+"addProduct",{
-            name, price, description, company, stock, stars, reviews, category, shipping, images, colors
-        },{
-            headers:{
-                Authorization : "Bearer " + token
-            }
-        })
-        setImages([])
-        setColors([])
-        setProduct({
-            name: "",
-            price: "",
-            description: "",
-            company: "",
-            stock: "",
-            stars: "",
-            reviews: "",
-            category: "",
-            shipping: false,
-            image: "",
-            color: ""
+    function toggleError() {
+        setShowError(showError => !showError)
+    }
 
+    function toggleProgress() {
+        setProgress(showProgress => !showProgress)
+    }
+
+    function handleProduct(e) {
+        e.preventDefault()
+        toggleProgress()
+        if (showError) {
+            toggleError()
+        }
+        axios.post(url + "addProduct", {
+            name, price, description, company, stock, stars, reviews, category, shipping, images, colors
+        }, {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        }).then((res) => {
+            setImages([])
+            setColors([])
+            setProduct({
+                name: "",
+                price: "",
+                description: "",
+                company: "",
+                stock: "",
+                stars: "",
+                reviews: "",
+                category: "",
+                shipping: false,
+                image: "",
+                color: ""
+
+            })
+            toggleProgress()
         })
+            .catch((error) => {
+                toggleError()
+                toggleProgress()
+            })
     }
 
     function deleteColor(id) {
@@ -74,24 +95,24 @@ function AddProduct() {
     }
     return (
         <Wrapper>
-            <PageHero title="Add Product"/>
+            <PageHero title="Add Product" />
             <div className="section-center product-center">
                 <img src={heroBcg} alt="heroBcg"></img>
                 <form onSubmit={handleProduct}>
                     <div className="form-control">
-                        <input type="text" name="name" placeholder="Product Name" value={name} onChange={onChange}></input>
+                        <input type="text" name="name" placeholder="Product Name" value={name} onChange={onChange} required></input>
                     </div>
                     <div className="form-control">
-                        <input type="number" name="price" placeholder="Price" value={price} onChange={onChange}></input>
+                        <input type="number" name="price" placeholder="Price" value={price} onChange={onChange} required></input>
                     </div>
                     <div className="form-control">
-                        <textarea rows={3} name="description" placeholder="Description" value={description} onChange={onChange}></textarea>
+                        <textarea rows={3} name="description" placeholder="Description" value={description} onChange={onChange} required></textarea>
                     </div>
                     <div className="form-control">
-                        <input type="text" name="company" placeholder="Company" value={company} onChange={onChange}></input>
+                        <input type="text" name="company" placeholder="Company" value={company} onChange={onChange} required></input>
                     </div>
                     <div className="form-control">
-                        <input type="number" name="stock" placeholder="Stock" value={stock} onChange={onChange}></input>
+                        <input type="number" name="stock" placeholder="Stock" value={stock} onChange={onChange} required></input>
                     </div>
                     <div className="form-control">
                         <input type="number" name="stars" placeholder="Rating out of 5" value={stars} onChange={onChange}></input>
@@ -100,7 +121,7 @@ function AddProduct() {
                         <input type="number" name="reviews" placeholder="Reviews" value={reviews} onChange={onChange}></input>
                     </div>
                     <div className="form-control">
-                        <input type="text" name="category" placeholder="Category" value={category} onChange={onChange}></input>
+                        <input type="text" name="category" placeholder="Category" value={category} onChange={onChange} required></input>
                     </div>
                     <div className="form-control shipping">
                         <label htmlFor="shipping">Free Shipping</label>
@@ -128,10 +149,17 @@ function AddProduct() {
                             )
                         })}
                     </div>
-                    <button type="submit" className="btn">Add Product</button>
+                    {
+                        showError &&
+                        <label className="invalid-text" hidden={false}>Something went wrong</label>
+                    }
+                    {
+                        showProgress ? <LoadingSmall /> :
+                            <button type="submit" className="btn">Add Product</button>
+                    }
                 </form>
             </div>
-            
+
         </Wrapper>
     )
 }
@@ -228,6 +256,19 @@ const Wrapper = styled.div`
                 color:rgb(5, 5, 26);
             }
         }
+    }
+
+    @media (max-width:992px){
+        .section-center{
+            grid-template-columns:1fr;
+            margin-bottom:80px;
+            margin-top:50px;
+            width:80vw;
+            img{
+                display: none;
+            }
+        }
+        
     }
 `
 export default AddProduct
