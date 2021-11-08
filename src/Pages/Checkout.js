@@ -8,6 +8,7 @@ import {Link} from 'react-router-dom'
 import axios from 'axios'
 import {url} from '../utils/constants'
 import { deleteCartFull } from "../utils/apiCalls"
+
 const token = localStorage.getItem("token")
 
 function Checkout(){
@@ -45,6 +46,80 @@ function Checkout(){
         )
         deleteCartFull()
         clearCart()
+    }
+    function loadScript(src) {
+        return new Promise((resolve => {
+            const script = document.createElement('script')
+            script.src = src
+            document.body.appendChild(script)
+            script.onload = () => {
+                resolve(true)
+            }
+            script.onerror = () => {
+                resolve(false)
+            }
+        }))
+    }
+    async function displayRazorpay() {
+
+        const res = await loadScript('https://checkout.razorpay.com/v1/checkout.js')
+
+        if (!res) {
+            alert('Razorpay SDk failed to load.')
+            return
+        }
+
+        var amount = 0
+        var id = ""
+        var currency = ""
+        var receipt = ""
+
+        var username = ""
+        var email = ""
+
+        await axios.post(url + "payment", { amount: total_amount + 300 }, {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        }).then((res) => {
+            amount = res.data['amount']
+            id = res.data['id']
+            currency = res.data['currency']
+            receipt = res.data['receipt']
+        })
+
+        await axios.get(url + 'get-user-details', {
+            headers: {
+                Authorization: "Bearer " + token
+            }
+        }).then((res) => {
+            username = res.data['userName']
+            email = res.data['email']
+            console.log(res.data)
+        })
+
+        const options = {
+            "key": "rzp_test_7KrJrtVx3LzHjV",
+            "amount": amount,
+            "currency": currency,
+            "name": "UrjaFurniStore",
+            "image": "https://www.linkpicture.com/q/logo_payment.png",
+            "order_id": id,
+            "handler": function (response) {
+                saveOrders()
+            },
+            "prefill": {
+                "name": username,
+                "email": email,
+                "contact": "9999999999"
+            },
+            "theme": {
+                "color": "#3399cc"
+            }
+        }
+
+        const paymentObject = new window.Razorpay(options)
+        paymentObject.open()
     }
     if(numberOfItems === 0){
         return(
@@ -99,7 +174,7 @@ function Checkout(){
                     </div>
 
                 </form>}
-                <button onClick={saveOrders} className="btn icon-btn">Proceed to Pay <IoMdSend/></button>
+                <button onClick={displayRazorpay} className="btn icon-btn">Proceed to Pay <IoMdSend/></button>
             </div>
       </Wrapper>  
     )
