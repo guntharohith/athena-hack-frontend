@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {Link} from 'react-router-dom'
 import heroBcg2 from '../assets/heroBcg2.jpeg'
 import heroBcg from '../assets/heroBcg.jpg'
+import FeaturedProducts from '../Components/FeaturedProducts';
 function Home(){
    
     return(
@@ -21,6 +22,7 @@ function Home(){
                     <img src={heroBcg} className="herobcg" alt="heroBcg"></img>
                 </div>
             </div>
+            <FeaturedProducts/>
         </Wrapper>
         
     )
@@ -67,6 +69,7 @@ const Wrapper = styled.div`
             }
         }
     }
+    
     @media (max-width:992px){
         .home{
             grid-template-columns:1fr;

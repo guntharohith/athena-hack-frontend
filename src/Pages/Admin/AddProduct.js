@@ -4,6 +4,7 @@ import heroBcg from '../../assets/heroBcg.jpg'
 import axios from 'axios'
 import PageHero from '../../Components/PageHero'
 import { url } from '../../utils/constants'
+import {FaTimes} from 'react-icons/fa'
 const token = localStorage.getItem("token")
 
 function AddProduct() {
@@ -61,10 +62,20 @@ function AddProduct() {
 
         })
     }
+
+    function deleteColor(id) {
+        const temp = colors.filter((col) => col !== id)
+        setColors(temp)
+    }
+
+    function deleteImage(id) {
+        const temp = images.filter((image) => image !== id)
+        setImages(temp)
+    }
     return (
         <Wrapper>
             <PageHero title="Add Product"/>
-            <div className="section-center">
+            <div className="section-center product-center">
                 <img src={heroBcg} alt="heroBcg"></img>
                 <form onSubmit={handleProduct}>
                     <div className="form-control">
@@ -99,9 +110,23 @@ function AddProduct() {
                         <input type="text" name="image" placeholder="Image Url" value={image} onChange={onChange}></input>
                         <button type="button" className="btn" onClick={() => { setImages([...images, image]); setProduct({ ...product, image: "" }) }}>Add</button>
                     </div>
+                    <div className="items">
+                        {images.map((image) => {
+                            return (
+                                <p>{image}<FaTimes onClick={() => deleteImage(image)} /></p>
+                            )
+                        })}
+                    </div>
                     <div className="form-control link">
                         <input type="text" name="color" placeholder="Color" value={color} onChange={onChange}></input>
                         <button type="button" className="btn" onClick={() => { setColors([...colors, color]); setProduct({ ...product, color: "" }) }}>Add</button>
+                    </div>
+                    <div className="items">
+                        {colors.map((col) => {
+                            return (
+                                <p>{col}<FaTimes onClick={() => deleteColor(col)} /></p>
+                            )
+                        })}
                     </div>
                     <button type="submit" className="btn">Add Product</button>
                 </form>
@@ -112,16 +137,16 @@ function AddProduct() {
 }
 
 const Wrapper = styled.div`
-    .section-center{
+    .product-center{
         display:grid;
-        grid-template-columns:1fr 1fr;
+        grid-template-columns:300px 1fr;
         column-gap:50px;
         margin-bottom:30px;
         margin-top:30px;
     }
     img{
-        width:500px;
-        height:550px;
+        width:300px;
+        height:300px;
         border-radius:5px;
     }
     form{
@@ -189,6 +214,19 @@ const Wrapper = styled.div`
         .btn{
             padding:7px;
             font-size:12px;
+        }
+         .items{
+            p{
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                background-color:rgb(238, 200, 186);
+                border-radius:5px;
+                padding:10px;
+                border-left:5px solid rgb(176, 146, 146);
+                font-size:15px;
+                color:rgb(5, 5, 26);
+            }
         }
     }
 `

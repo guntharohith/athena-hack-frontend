@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import logo from '../assets/logo.png'
 import { FaTimes } from 'react-icons/fa'
+import { useEffect } from 'react'
 import { useProductsContext } from '../context/products_context'
 import styled from 'styled-components'
 import useLocalStorage from "../utils/useLocalStorage";
@@ -8,6 +9,11 @@ import useLocalStorage from "../utils/useLocalStorage";
 function AdminSidebar() {
     const [token, setToken] = useLocalStorage("token", "")
     const { isSideBarOpen, closeSideBar } = useProductsContext();
+    useEffect(() => {
+        return () => {
+            window.location.reload()
+        }
+    }, [token])
     return (
         <Wrapper>
             <aside className={`${isSideBarOpen ? 'sidebar sidebar-open' : 'sidebar'}`}>
@@ -20,7 +26,7 @@ function AdminSidebar() {
                 <ul className="sidebar-links">
                     <li><Link onClick={closeSideBar} to="/admin-home">Products</Link></li>
                     <li><Link onClick={closeSideBar} to="/admin-orders">Orders</Link></li>
-                    <li><Link to="/login" onClick={() => setToken("")}>Logout</Link></li>
+                    <li><Link to="/login" onClick={() => { setToken(""); localStorage.setItem("role", "")}}>Logout</Link></li>
                 </ul>
             </aside>
         </Wrapper>

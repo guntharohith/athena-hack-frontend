@@ -8,6 +8,7 @@ const ProductsContext = React.createContext();
 const initialState = {
     isSideBarOpen : false,
     products: [],
+    featured_products:[],
     loading:false,
     single_error:false,
     single_loading:false,

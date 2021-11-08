@@ -25,3 +25,11 @@ export function deleteProduct(id){
         }
     })
 }
+
+export function deleteOrder(id){
+    axios.delete(url + "delete-order/" + id, {
+        headers: {
+            Authorization: "Bearer " + token
+        }
+    })
+}

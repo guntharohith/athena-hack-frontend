@@ -16,11 +16,11 @@ function Sidebar(){
                     <button type="button" className="close-btn" onClick={closeSideBar}><FaTimes /></button>
                 </div>
                 <ul className="sidebar-links">
-                    <li><Link onClick={closeSideBar} to="/">Home</Link></li>
+                    <li><Link onClick={closeSideBar} to="/home">Home</Link></li>
                     <li><Link onClick={closeSideBar} to="/about">About</Link></li>
                     <li><Link onClick={closeSideBar} to="/products">Products</Link></li>
-                    {localStorage.getItem("token") !== "" && <li><Link onClick={closeSideBar} to="/checkout">Checkout</Link></li>}
-                    {localStorage.getItem("token") !== "" && <li><Link onClick={closeSideBar} to="/orders">Orders</Link></li>}
+                    <li><Link onClick={closeSideBar} to="/checkout">Checkout</Link></li>
+                    <li><Link onClick={closeSideBar} to="/orders">Orders</Link></li>
                 </ul>
                 <CartButtons/>
             </aside>

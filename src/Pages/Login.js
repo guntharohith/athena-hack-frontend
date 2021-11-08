@@ -3,12 +3,11 @@ import styled from "styled-components"
 import heroBcg from '../assets/heroBcg.jpg'
 import { FaUser} from 'react-icons/fa'
 import { RiLockPasswordFill} from 'react-icons/ri'
-import { Link, useHistory } from "react-router-dom"
+import { Link} from "react-router-dom"
+import history from '../utils/history'
 import axios from 'axios'
 import {url} from '../utils/constants'
 function Login(){
-    let history = useHistory()
-   
     const [details,setDetails] = useState({username:"",password:"",remember:false})
     const {username,password,remember} = details
     const [toggle,setToggle] = useState(false)
@@ -34,7 +33,10 @@ function Login(){
     function handleSubmit(e){
         e.preventDefault()
         axios.post(url+"login",{userName:username,password:password})
-        .then((res) => {username !== "admin@gmail.com" ? history.push({pathname:"/home"}) : history.push({pathname:"/admin-home"});localStorage.setItem("token",res.data.jwtToken);setIsLoggedIn(true)})
+        .then((res) => {username !== "admin@gmail.com" ? history.push({pathname:"/home"}) : history.push({pathname:"/admin-home"});
+        username !== "admin@gmail.com" ? localStorage.setItem("role","user") : localStorage.setItem("role","admin") ;
+        localStorage.setItem("token",res.data.jwtToken);
+        setIsLoggedIn(true)})
     }
     function togglePassword(){
         setToggle(!toggle)

@@ -11,7 +11,6 @@ import SingleProduct from './Pages/SingleProduct';
 import Cart from './Pages/Cart';
 import Checkout from './Pages/Checkout';
 import Orders from './Pages/Orders';
-import { useUserContext } from './context/user_context'
 import AdminNavbar from './Components/AdminNavbar'
 import AdminSidebar from './Components/AdminSidebar'
 import Welcome from './Components/Welcome'
@@ -20,37 +19,60 @@ import AddProduct from './Pages/Admin/AddProduct'
 import AdminSingleProduct from './Pages/Admin/AdminSingleProduct'
 import EditProduct from './Pages/Admin/EditProduct';
 import AdminOrders from './Pages/Admin/AdminOrders';
-function App() {
-  const {userDetails} = useUserContext()
-  const admin = userDetails.role === "admin"
-  const user = userDetails.role === "user"
-  const token = localStorage.getItem("token")
+import history from './utils/history'
+
+const token = localStorage.getItem("token")
+const role = localStorage.getItem("role")
+const user = role === "user"
+const admin = role === "admin"
+
+const UserRoute = ({ component: Component, ...rest }) => {
   return (
-      <Router>
-        {user && <Navbar />}
-        {user && <Sidebar />}
-        {admin && <AdminNavbar/>}
-        {admin && <AdminSidebar/>}
-        {token === "" && <Welcome/>}
-        <Switch>
-          <Route exact path="/" render={() => <Redirect to="/login" />} />
-          <Route exact path="/home"><Home /></Route>
-          <Route exact path="/login"><Login/></Route>
-          <Route exact path="/products"><Products/></Route>
-          <Route exact path="/products/:id" children={<SingleProduct/>}/>
-          <Route exact path="/signup"><Signup/></Route>
-          <Route exact path="/about"><About/></Route>
-          <Route exact path="/cart"><Cart/></Route>
-          <Route exact path="/checkout"><Checkout/></Route>
-          <Route exact path="/orders"><Orders/></Route>
-          <Route exact path="/admin-home"><AdminHome/></Route>
-          <Route exact path="/add-product"><AddProduct /></Route>
-          <Route exact path="/admin-home/:id"><AdminSingleProduct /></Route>
-          <Route exact path="/edit-product/:id"><EditProduct/></Route>
-          <Route exact path="/admin-orders"><AdminOrders/></Route>
-        </Switch>
-        <Footer />
-      </Router> 
+    <Route
+      {...rest}
+      render={props =>
+        user ? (<Component {...props} />) : admin ? (<Redirect to={{ pathname: "/admin-home" }} />) : (<Redirect to={{ pathname: "/login" }} />)
+      }
+    />)
+}
+
+const AdminRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props =>
+
+      admin ? (<Component {...props} />) : user ? (<Redirect to={{ pathname: "/home" }} />) : (<Redirect to={{ pathname: "/login" }} />)
+
+    }
+  />
+)
+function App() {
+  return (
+    <Router history = {history}>
+      {user && <Navbar />}
+      {user && <Sidebar />}
+      {admin && <AdminNavbar />}
+      {admin && <AdminSidebar />}
+      {!token  && <Welcome />}
+      <Switch>
+        <Route exact path="/" render={() => <Redirect to="/login" />} />
+        <UserRoute exact path="/home" component={Home}/>
+        <Route exact path="/login"><Login /></Route>
+        <UserRoute exact path="/products" component={Products}/>
+        <UserRoute exact path="/products/:id" component={SingleProduct}/>
+        <Route exact path="/signup"><Signup /></Route>
+        <UserRoute exact path="/about" component={About}/>
+        <UserRoute exact path="/cart" component={Cart}/>
+        <UserRoute exact path="/checkout" component={Checkout}/>
+        <UserRoute exact path="/orders" component={Orders}/>
+        <AdminRoute exact path="/admin-home" component={AdminHome}/>
+        <AdminRoute exact path="/add-product" component={AddProduct}/>
+        <AdminRoute exact path="/admin-home/:id" component={AdminSingleProduct}/>
+        <AdminRoute exact path="/edit-product/:id" component={EditProduct}/>
+        <AdminRoute exact path="/admin-orders" component={AdminOrders}/>
+      </Switch>
+      <Footer />
+    </Router>
   );
 }
 

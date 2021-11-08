@@ -7,6 +7,7 @@ import Stars from '../../Components/Stars'
 import PageHero from '../../Components/PageHero'
 import { Link, useParams } from 'react-router-dom'
 import {deleteProduct} from '../../utils/apiCalls'
+
 function AdminSingleProduct() {
     const { id } = useParams()
     const { single_product, single_loading, single_error, fetchSingleProduct, removeProduct } = useProductsContext()

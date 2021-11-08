@@ -1,6 +1,7 @@
 import logo from '../assets/logo.png'
 import { Link } from 'react-router-dom'
 import { FaBars } from 'react-icons/fa'
+import { useEffect } from 'react';
 import styled from "styled-components";
 import { useProductsContext } from '../context/products_context'
 import useLocalStorage from "../utils/useLocalStorage";
@@ -8,6 +9,11 @@ import useLocalStorage from "../utils/useLocalStorage";
 function AdminNavbar() {
     const { openSideBar } = useProductsContext();
     const [token, setToken] = useLocalStorage("token", "")
+    useEffect(() => {
+        return () => {
+            window.location.reload()
+        }
+    }, [token])
     return (
         <Wrapper>
             <div className="navbar-center">
@@ -20,7 +26,7 @@ function AdminNavbar() {
                 <ul className="nav-links">
                     <li><Link to="/admin-home">Products</Link></li>
                     <li><Link to="/admin-orders">Orders</Link></li> 
-                    <li><Link to="/login" onClick={() => setToken("")}>Logout</Link></li>
+                    <li><Link to="/login" onClick={() => { setToken(""); localStorage.setItem("role","")}}>Logout</Link></li>
                 </ul>
             </div>
         </Wrapper>

@@ -9,7 +9,8 @@ function ProductReducer(state,action){
         return { ...state, loading: true, error: false }
     }
     if (action.type === "PRODUCTS_LOADING_SUCCESS") {
-        return { ...state, products: action.payload, loading: false, error: false }
+        const temp = action.payload.filter((product) => product.price > 1000)
+        return { ...state, products: action.payload, featured_products:temp, loading: false, error: false }
     }
     if (action.type === "PRODUCTS_LOADING_FAIL") {
         return { ...state, error: true }

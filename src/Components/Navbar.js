@@ -4,11 +4,9 @@ import { Link } from 'react-router-dom'
 import { FaBars } from 'react-icons/fa'
 import styled from "styled-components";
 import { useProductsContext } from '../context/products_context'
-import useLocalStorage from "../utils/useLocalStorage";
 
 function Navbar() {
     const { openSideBar } = useProductsContext();
-    const [token,setToken] = useLocalStorage("token","")
 
     return (
         <Wrapper>
@@ -20,11 +18,11 @@ function Navbar() {
                     <button type="button" className="navbar-toggle" onClick={openSideBar}><FaBars className="navbar-icon" /></button>
                 </div>
                 <ul className="nav-links">
-                    <li><Link to="/">Home</Link></li>
+                    <li><Link to="/home">Home</Link></li>
                     <li><Link to="/about">About</Link></li>
                     <li><Link to="/products">Products</Link></li>
-                    {token !== "" && <li><Link to="/checkout">Checkout</Link></li>}
-                    {token !== "" && <li><Link to="/orders">Orders</Link></li>}
+                    <li><Link to="/checkout">Checkout</Link></li>
+                    <li><Link to="/orders">Orders</Link></li>
                 </ul>
                 <CartButtons />
             </div>

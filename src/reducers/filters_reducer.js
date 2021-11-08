@@ -63,7 +63,7 @@ function FilterReducer(state,action){
         }
         if(color !== "all"){
             tempProducts = tempProducts.filter((product) =>
-                product.colors.find((c) => c === color)
+                product.colors.find((c) => c.color === color)
             )
         }
         if(price !== max_price){

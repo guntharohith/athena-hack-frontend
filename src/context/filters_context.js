@@ -39,7 +39,6 @@ function FilterProvider({children}){
     }
 
     function updateSort(e){
-        console.log(e.target.value)
         dispatch({type:"UPDATE_SORT",payload:e.target.value})
     }
 

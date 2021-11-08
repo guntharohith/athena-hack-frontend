@@ -7,7 +7,7 @@ import FilterProvider from './context/filters_context'
 import CartProvider from './context/cart_context'
 import UserProvider from './context/user_context'
 ReactDOM.render(
-  <React.StrictMode>
+  
     <ProductsProvider>
       <FilterProvider>
         <CartProvider>
@@ -17,7 +17,7 @@ ReactDOM.render(
         </CartProvider>
       </FilterProvider>
     </ProductsProvider>
-  </React.StrictMode>,
+  ,
   document.getElementById('root')
 );
 

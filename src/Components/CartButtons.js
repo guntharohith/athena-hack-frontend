@@ -23,8 +23,7 @@ function CartButtons() {
                 </span>
             </Link>
 
-              {token === "" ? <Link to="/login" className="login-btn" onClick={closeSideBar} >Login<FaUserPlus className="login-icon"/></Link> :
-             <Link to="/login" className="login-btn" onClick={() => setToken("")}>Logout<FaUserMinus className="login-icon"/></Link>}
+            <Link to="/login" className="login-btn" onClick={() => {setToken("");localStorage.setItem("role","")}}>Logout<FaUserMinus className="login-icon"/></Link>
         </Wrapper>
     )
 }

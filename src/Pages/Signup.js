@@ -1,7 +1,7 @@
 import React, {useState,useEffect} from "react"
 import styled from "styled-components"
 import heroBcg from '../assets/heroBcg.jpg'
-import {FaUser} from 'react-icons/fa'
+import { FaUser, FaMobileAlt} from 'react-icons/fa'
 import { RiLockPasswordFill, RiLockPasswordLine} from 'react-icons/ri'
 import { IoMdMail} from 'react-icons/io'
 import {Link,useHistory } from 'react-router-dom'
@@ -10,8 +10,9 @@ import {url} from '../utils/constants'
 
 function Signup(){
     const history = useHistory()
-    const [userDetails,setUserDetails] = useState({username:"",email:"",password:"",repassword:"",remember:false})
-    const {username,email,password,repassword,remember} = userDetails
+    const [userDetails,setUserDetails] = useState({
+        username:"",email:"",mobileNumber:"",password:"",repassword:"",remember:false})
+    const {username,email,mobileNumber,password,repassword,remember} = userDetails
     useEffect(() => {
         return () => {
             window.location.reload()
@@ -33,6 +34,7 @@ function Signup(){
         axios.post(url+"signup",{
             userName:username,
             email:email,
+            mobileNumber:mobileNumber,
             password:password
         }).then(
             (res) => {
@@ -52,6 +54,10 @@ function Signup(){
                     <div className="form-control">
                         <IoMdMail />
                         <input type="email" name="email" placeholder="Your Email" value={email} onChange={changeDetails}></input>
+                    </div>
+                    <div className="form-control">
+                        <FaMobileAlt />
+                        <input type="text" name="mobileNumber" placeholder="Your Mobile Number" value={mobileNumber} onChange={changeDetails}></input>
                     </div>
                     <div className="form-control">
                         <RiLockPasswordFill />

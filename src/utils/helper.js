@@ -1,7 +1,8 @@
+
 export function getUniqueItems(data,type){
     let unique = data.map((item) => item[type])
     if(type === "colors"){
-        unique = unique.flat()
+        unique = unique.flat().map((col) => col.color)
     }
     return ["all",...new Set(unique)]
 }
@@ -18,3 +19,5 @@ export function convertDate(dateString) {
     var p = dateString.split(/\D/g)
     return [p[2], p[1], p[0]].join("-")
 }
+
+

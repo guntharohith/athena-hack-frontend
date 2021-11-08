@@ -1,19 +1,22 @@
-import React, {useEffect} from 'react'
-import {useParams} from 'react-router-dom'
+import React, { useEffect } from 'react'
 import Loading from '../Components/Loading'
 import {useProductsContext} from '../context/products_context'
 import styled from 'styled-components'
 import ImageContainer from '../Components/ImageContainer'
 import Stars from '../Components/Stars'
 import PageHero from '../Components/PageHero'
+import { Link, useParams } from 'react-router-dom'
 import AddToCart from '../Components/AddToCart'
+
 function SingleProduct(){
     const {id} = useParams()
     const {single_product,single_loading,single_error,fetchSingleProduct} = useProductsContext()
+    
     useEffect(()=>{
         fetchSingleProduct(id)
         //eslint-disable-next-line
     },[])
+
     if(single_loading){
         return <Loading/>
     }
@@ -51,15 +54,9 @@ function SingleProduct(){
                             : null}
 
                     </div>
-                </div>
-
-                
+                </div>  
             </div>
-            
-           
-
-        </Wrapper>
-        
+        </Wrapper>  
     )
 }
 const Wrapper = styled.main`

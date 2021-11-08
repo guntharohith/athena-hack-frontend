@@ -71,7 +71,7 @@ function EditProduct() {
     return (
         <Wrapper>
             <PageHero title="Edit Product" />
-            <div className="section-center">
+            <div className="section-center product-center">
                 <img src={heroBcg} alt="heroBcg"></img>
                 <form onSubmit={handleProduct}>
                     <div className="form-control">
@@ -133,9 +133,9 @@ function EditProduct() {
 }
 
 const Wrapper = styled.div`
-    .section-center{
+    .product-center{
         display:grid;
-        grid-template-columns:1fr 1fr;
+        grid-template-columns:300px 1fr;
         column-gap:50px;
         margin-bottom:30px;
         margin-top:30px;

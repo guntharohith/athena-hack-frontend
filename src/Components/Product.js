@@ -4,8 +4,8 @@ import { useUserContext } from '../context/user_context'
 import {FaSearch} from 'react-icons/fa'
 function Product({productId,name,image,price}){
     const { userDetails } = useUserContext()
-
     return(
+        
         <Wrapper>
             <div className="container">
                 <img src={image} alt={name}></img>
